@@ -1,0 +1,17 @@
+{
+  "name": "moviefix-api",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "dev":"npx tsx watch src/server.ts"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "devDependencies": {
+    "@types/node": "^22.13.4",
+    "tsx": "^4.19.3",
+    "typescript": "^5.7.3"
+  }
+}

@@ -11,6 +11,7 @@ app.listen(port, () => {
   console.log(`Servidor rodando na porta ${port}`);
 });
 
+// Rota para buscar filmes
 app.get("/movies", async (req: Request, res: Response): Promise<void> => {
   try {
     const movies = await prisma.movie.findMany({
@@ -30,6 +31,7 @@ app.get("/movies", async (req: Request, res: Response): Promise<void> => {
   }
 });
 
+// Rota para cadastrar um filme
 app.post("/movies", async (req: Request, res: Response): Promise<void> => {
   const { title, genre_id, language_id, oscar_count, release_date } = req.body;
 
@@ -61,3 +63,35 @@ app.post("/movies", async (req: Request, res: Response): Promise<void> => {
     res.status(500).send({ message: "Falha ao cadastrar um filme" });
   }
 });
+
+// Rota para atualizar um filme
+app.put("/movies/:id", async (req: Request, res: Response): Promise<void> => {
+  const { id } = req.params; // Pegamos o ID da URL
+
+  try {
+    const movie = await prisma.movie.findUnique({
+      where: { id: Number(id) }, // Convertendo ID para número
+    });
+
+    if (!movie) {
+      res.status(404).send({ message: "Filme não encontrado" });
+      return;
+    }
+
+    const data = { ...req.body };
+    if (data.release_date) {
+      data.release_date = new Date(data.release_date);
+    }
+
+    await prisma.movie.update({
+      where: { id: Number(id) },
+      data,
+    });
+
+    res.status(200).send({ message: "Filme atualizado com sucesso!" });
+  } catch (error) {
+    console.error("Erro ao atualizar filme:", error);
+    res.status(500).send({ message: "Falha ao atualizar o registro" });
+  }
+});
+
